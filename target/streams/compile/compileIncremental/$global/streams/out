@@ -1,0 +1,27 @@
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial source changes: [0m
+[0m[[0m[0mdebug[0m] [0m[0m	removed:Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0m	added: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0m	modified: Set(/home/nimrod/Chord-final/src/main/scala/main.scala)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated products: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0mExternal API changes: API Changes: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0mModified binary dependencies: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial directly invalidated classes: Set(main)[0m
+[0m[[0m[0mdebug[0m] [0m[0m[0m
+[0m[[0m[0mdebug[0m] [0m[0mSources indirectly invalidated by:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	product: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0m	binary dep: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0m	external source: Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll sources are invalidated.[0m
+[0m[[0m[0mdebug[0m] [0m[0mRecompiling all 1 sources: invalidated sources (1) exceeded 50.0% of all sources[0m
+[0m[[0m[0minfo[0m] [0m[0mCompiling 1 Scala source to /home/nimrod/Chord-final/target/scala-2.11/classes ...[0m
+[0m[[0m[0mdebug[0m] [0m[0mGetting org.scala-sbt:compiler-bridge_2.11:1.2.5:compile for Scala 2.11.0[0m
+[0m[[0m[0mdebug[0m] [0m[0mGetting org.scala-sbt:compiler-bridge_2.11:1.2.5:compile for Scala 2.11.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m[zinc] Running cached compiler 1555ad5d for Scala compiler version 2.11.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m[zinc] The Scala compiler is invoked with:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	-bootclasspath[0m
+[0m[[0m[0mdebug[0m] [0m[0m	/home/nimrod/jdk1.8.0_201/jre/lib/resources.jar:/home/nimrod/jdk1.8.0_201/jre/lib/rt.jar:/home/nimrod/jdk1.8.0_201/jre/lib/sunrsasign.jar:/home/nimrod/jdk1.8.0_201/jre/lib/jsse.jar:/home/nimrod/jdk1.8.0_201/jre/lib/jce.jar:/home/nimrod/jdk1.8.0_201/jre/lib/charsets.jar:/home/nimrod/jdk1.8.0_201/jre/lib/jfr.jar:/home/nimrod/jdk1.8.0_201/jre/classes:/home/nimrod/.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.11.0.jar[0m
+[0m[[0m[0mdebug[0m] [0m[0m	-classpath[0m
+[0m[[0m[0mdebug[0m] [0m[0m	/home/nimrod/Chord-final/target/scala-2.11/classes:/home/nimrod/.ivy2/cache/com.typesafe.akka/akka-actor_2.11/jars/akka-actor_2.11-2.3.4.jar:/home/nimrod/.ivy2/cache/com.typesafe/config/bundles/config-1.2.1.jar[0m
+[0m[[0m[0mdebug[0m] [0m[0mScala compilation took 2.689608537 s[0m
+[0m[[0m[0minfo[0m] [0m[0mDone compiling.[0m
