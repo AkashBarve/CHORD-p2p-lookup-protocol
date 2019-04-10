@@ -1,27 +1,66 @@
 [0m[[0m[0mdebug[0m] [0m[0m[0m
 [0m[[0m[0mdebug[0m] [0m[0mInitial source changes: [0m
 [0m[[0m[0mdebug[0m] [0m[0m	removed:Set()[0m
-[0m[[0m[0mdebug[0m] [0m[0m	added: Set()[0m
-[0m[[0m[0mdebug[0m] [0m[0m	modified: Set(/home/nimrod/Chord-final/src/main/scala/main.scala)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	added: Set(/home/nimrod/Chord-final/src/main/scala/SingleNode.scala)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	modified: Set(/home/nimrod/Chord-final/src/main/scala/ChordActor.scala)[0m
 [0m[[0m[0mdebug[0m] [0m[0mInvalidated products: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0mExternal API changes: API Changes: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0mModified binary dependencies: Set()[0m
-[0m[[0m[0mdebug[0m] [0m[0mInitial directly invalidated classes: Set(main)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial directly invalidated classes: Set(closeProgram, ChordActor)[0m
 [0m[[0m[0mdebug[0m] [0m[0m[0m
 [0m[[0m[0mdebug[0m] [0m[0mSources indirectly invalidated by:[0m
 [0m[[0m[0mdebug[0m] [0m[0m	product: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0m	binary dep: Set()[0m
 [0m[[0m[0mdebug[0m] [0m[0m	external source: Set()[0m
-[0m[[0m[0mdebug[0m] [0m[0mAll sources are invalidated.[0m
-[0m[[0m[0mdebug[0m] [0m[0mRecompiling all 1 sources: invalidated sources (1) exceeded 50.0% of all sources[0m
-[0m[[0m[0minfo[0m] [0m[0mCompiling 1 Scala source to /home/nimrod/Chord-final/target/scala-2.11/classes ...[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated classes: Set(closeProgram, ChordActor)[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll initially invalidated sources:Set(/home/nimrod/Chord-final/src/main/scala/SingleNode.scala, /home/nimrod/Chord-final/src/main/scala/ChordActor.scala)[0m
+[0m[[0m[0minfo[0m] [0m[0mCompiling 2 Scala sources to /home/nimrod/Chord-final/target/scala-2.11/classes ...[0m
 [0m[[0m[0mdebug[0m] [0m[0mGetting org.scala-sbt:compiler-bridge_2.11:1.2.5:compile for Scala 2.11.0[0m
 [0m[[0m[0mdebug[0m] [0m[0mGetting org.scala-sbt:compiler-bridge_2.11:1.2.5:compile for Scala 2.11.0[0m
-[0m[[0m[0mdebug[0m] [0m[0m[zinc] Running cached compiler 1555ad5d for Scala compiler version 2.11.0[0m
+[0m[[0m[0mdebug[0m] [0m[0m[zinc] Running cached compiler 7fd86655 for Scala compiler version 2.11.0[0m
 [0m[[0m[0mdebug[0m] [0m[0m[zinc] The Scala compiler is invoked with:[0m
 [0m[[0m[0mdebug[0m] [0m[0m	-bootclasspath[0m
 [0m[[0m[0mdebug[0m] [0m[0m	/home/nimrod/jdk1.8.0_201/jre/lib/resources.jar:/home/nimrod/jdk1.8.0_201/jre/lib/rt.jar:/home/nimrod/jdk1.8.0_201/jre/lib/sunrsasign.jar:/home/nimrod/jdk1.8.0_201/jre/lib/jsse.jar:/home/nimrod/jdk1.8.0_201/jre/lib/jce.jar:/home/nimrod/jdk1.8.0_201/jre/lib/charsets.jar:/home/nimrod/jdk1.8.0_201/jre/lib/jfr.jar:/home/nimrod/jdk1.8.0_201/jre/classes:/home/nimrod/.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.11.0.jar[0m
 [0m[[0m[0mdebug[0m] [0m[0m	-classpath[0m
 [0m[[0m[0mdebug[0m] [0m[0m	/home/nimrod/Chord-final/target/scala-2.11/classes:/home/nimrod/.ivy2/cache/com.typesafe.akka/akka-actor_2.11/jars/akka-actor_2.11-2.3.4.jar:/home/nimrod/.ivy2/cache/com.typesafe/config/bundles/config-1.2.1.jar[0m
-[0m[[0m[0mdebug[0m] [0m[0mScala compilation took 2.689608537 s[0m
+[0m[[0m[0mdebug[0m] [0m[0mScala compilation took 3.258746091 s[0m
 [0m[[0m[0minfo[0m] [0m[0mDone compiling.[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from ChordActor...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(ChordActor)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(ChordActor)[0m
+[0m[[0m[0mdebug[0m] [0m[0mNone of the modified names appears in source file of Main. This dependency is not being considered for invalidation.[0m
+[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(ChordActor,ModifiedNames(changes = UsedName(node0,[Default]))) invalidates 1 classes due to The ChordActor has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(node0,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(ChordActor)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	> [0m
+[0m[[0m[0mdebug[0m] [0m[0m	> [0m
+[0m[[0m[0mdebug[0m] [0m[0m        [0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from SingleNode...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(SingleNode)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(SingleNode)[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following member ref dependencies of SingleNode are invalidated:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	ChordActor[0m
+[0m[[0m[0mdebug[0m] [0m[0m	closeProgram[0m
+[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(SingleNode,ModifiedNames(changes = UsedName(getClass,[Default]), UsedName($isInstanceOf,[Default]), UsedName(ne,[Default]), UsedName(sender,[Default]), UsedName(productPrefix,[Default]), UsedName(toString,[Default]), UsedName(clone,[Default]), UsedName(preStart,[Default]), UsedName(notify,[Default]), UsedName(preRestart,[Default]), UsedName(Receive,[Default]), UsedName(unapply,[Default]), UsedName(canEqual,[Default]), UsedName(receive,[Default]), UsedName(self,[Implicit]), UsedName(supervisorStrategy,[Default]), UsedName(SingleNode;init;,[Default]), UsedName(copy$default$1,[Default]), UsedName(aroundReceive,[Default]), UsedName(Idx,[Default]), UsedName(finalize,[Default]), UsedName(context,[Implicit]), UsedName(asInstanceOf,[Default]), UsedName(##,[Default]), UsedName(isInstanceOf,[Default]), UsedName(aroundPostStop,[Default]), UsedName(aroundPreStart,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(aroundPreRestart,[Default]), UsedName(productIterator,[Default]), UsedName(==,[Default]), UsedName(productElement,[Default]), UsedName(SingleNode,[Default]), UsedName(productArity,[Default]), UsedName(postRestart,[Default]), UsedName(notifyAll,[Default]), UsedName(copy,[Default]), UsedName(!=,[Default]), UsedName(i,[Default]), UsedName(copy$default$2,[Default]), UsedName(aroundPostRestart,[Default]), UsedName(apply,[Default]), UsedName($init$,[Default]), UsedName(equals,[Default]), UsedName(synchronized,[Default]), UsedName(wait,[Default]), UsedName(join,[Default]), UsedName(postStop,[Default]), UsedName(eq,[Default]), UsedName(unhandled,[Default]))) invalidates 3 classes due to The SingleNode has the following implicit definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(self,[Implicit]), UsedName(context,[Implicit]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(SingleNode)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	> [0m
+[0m[[0m[0mdebug[0m] [0m[0m	> by member reference: Set(closeProgram, ChordActor)[0m
+[0m[[0m[0mdebug[0m] [0m[0m        [0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidating (transitively) by inheritance from SingleNode.join...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(SingleNode.join)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInvalidated by transitive inheritance dependency: Set(SingleNode.join)[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of closeProgram: Set(UsedName($isInstanceOf,[Default]), UsedName(toString,[Default]), UsedName(canEqual,[Default]), UsedName(asInstanceOf,[Default]), UsedName(isInstanceOf,[Default]), UsedName(==,[Default]), UsedName(join,[Default]))[0m
+[0m[[0m[0mdebug[0m] [0m[0mThe following modified names cause invalidation of ChordActor: Set(UsedName(asInstanceOf,[Default]), UsedName(isInstanceOf,[Default]), UsedName(apply,[Default]), UsedName(join,[Default]))[0m
+[0m[[0m[0mdebug[0m] [0m[0mChange NamesChange(SingleNode.join,ModifiedNames(changes = UsedName(getClass,[Default]), UsedName(andThen,[Default]), UsedName($isInstanceOf,[Default]), UsedName(ne,[Default]), UsedName(productPrefix,[Default]), UsedName(toString,[Default]), UsedName(clone,[Default]), UsedName(notify,[Default]), UsedName(compose,[Default]), UsedName(unapply,[Default]), UsedName(canEqual,[Default]), UsedName(copy$default$1,[Default]), UsedName(finalize,[Default]), UsedName(asInstanceOf,[Default]), UsedName(##,[Default]), UsedName(isInstanceOf,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(productIterator,[Default]), UsedName(SingleNode;join;init;,[Default]), UsedName(==,[Default]), UsedName(productElement,[Default]), UsedName(productArity,[Default]), UsedName(notifyAll,[Default]), UsedName(someNode,[Default]), UsedName(copy,[Default]), UsedName(!=,[Default]), UsedName(apply,[Default]), UsedName($init$,[Default]), UsedName(equals,[Default]), UsedName(synchronized,[Default]), UsedName(wait,[Default]), UsedName(join,[Default]), UsedName(eq,[Default]))) invalidates 3 classes due to The SingleNode.join has the following regular definitions changed:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	UsedName(getClass,[Default]), UsedName(andThen,[Default]), UsedName($isInstanceOf,[Default]), UsedName(ne,[Default]), UsedName(productPrefix,[Default]), UsedName(toString,[Default]), UsedName(clone,[Default]), UsedName(notify,[Default]), UsedName(compose,[Default]), UsedName(unapply,[Default]), UsedName(canEqual,[Default]), UsedName(copy$default$1,[Default]), UsedName(finalize,[Default]), UsedName(asInstanceOf,[Default]), UsedName(##,[Default]), UsedName(isInstanceOf,[Default]), UsedName($asInstanceOf,[Default]), UsedName(hashCode,[Default]), UsedName(productIterator,[Default]), UsedName(SingleNode;join;init;,[Default]), UsedName(==,[Default]), UsedName(productElement,[Default]), UsedName(productArity,[Default]), UsedName(notifyAll,[Default]), UsedName(someNode,[Default]), UsedName(copy,[Default]), UsedName(!=,[Default]), UsedName(apply,[Default]), UsedName($init$,[Default]), UsedName(equals,[Default]), UsedName(synchronized,[Default]), UsedName(wait,[Default]), UsedName(join,[Default]), UsedName(eq,[Default]).[0m
+[0m[[0m[0mdebug[0m] [0m[0m	> by transitive inheritance: Set(SingleNode.join)[0m
+[0m[[0m[0mdebug[0m] [0m[0m	> [0m
+[0m[[0m[0mdebug[0m] [0m[0m	> by member reference: Set(closeProgram, ChordActor)[0m
+[0m[[0m[0mdebug[0m] [0m[0m        [0m
+[0m[[0m[0mdebug[0m] [0m[0mNew invalidations:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	Set(closeProgram)[0m
+[0m[[0m[0mdebug[0m] [0m[0mInitial set of included nodes: Set(closeProgram)[0m
+[0m[[0m[0mdebug[0m] [0m[0mPreviously invalidated, but (transitively) depend on new invalidations:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	Set()[0m
+[0m[[0m[0mdebug[0m] [0m[0mAll newly invalidated classes after taking into account (previously) recompiled classes:Set()[0m
