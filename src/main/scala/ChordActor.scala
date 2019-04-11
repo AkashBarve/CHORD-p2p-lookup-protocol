@@ -59,7 +59,7 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
           }
 
           fingertable(i) = (entry + "," + correspondingNode)
-          println("fingerval " + correspondingNode)
+          //println("fingerval " + correspondingNode)
 
         }
 
@@ -67,7 +67,11 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
         println("creating node " + x)
         println("successor " + successor)
         println("predecessor " + predecessor)
-        println("fingertable " + fingertable.toString)
+        println("fingertable :")
+        for(i <- 0 to fingertable.size - 1) {
+          var printnode =  fingertable(i).split(",")
+          println(x + " + " + math.pow(2,i) + ", " + printnode(1))
+        }
         //nodes += context.actorOf(Props(new ChordNode(x, sortedNodeIds)), x.toString)
         //nodes ! InitNode(x, sortedNodeIds)
       }
