@@ -3,7 +3,7 @@ import java.security.MessageDigest
 
 import scala.util.Random
 
-object ConsistentHashing {
+object Hashify {
 
   def getHash(str: String, i: Int): Int = {
     val shaId = MessageDigest.getInstance("SHA-1")
@@ -19,5 +19,13 @@ object ConsistentHashing {
 
   def getRandomId(i: Int): Int = {
     getHash(Random.alphanumeric.take(32).toString(), i)
+//    val random = Random.alphanumeric.take(32).toString
+//    var hash = 0
+//    var ascii = 0
+//    for(i <- random) {
+//      ascii = i.toInt
+//      hash = hash + ascii
+//    }
+//    hash % n+10
   }
 }

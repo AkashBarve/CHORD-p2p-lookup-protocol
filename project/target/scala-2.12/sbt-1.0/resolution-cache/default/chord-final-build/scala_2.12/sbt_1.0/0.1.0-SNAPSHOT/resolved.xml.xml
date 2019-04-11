@@ -4,7 +4,7 @@
 		module="chord-final-build"
 		revision="0.1.0-SNAPSHOT"
 		status="integration"
-		publication="20190409141038"
+		publication="20190410210437"
 		e:sbtVersion="1.0" e:scalaVersion="2.12"
 	>
 		<description>

@@ -12,7 +12,7 @@ object Main extends App {
       // default Actor constructor
       val chordActor = system.actorOf(Props(new ChordActor(numNodes, numReq)), name = "chordactor") //actorof creates actor instance
       //now that we have instance of an actor send message to simulate Chord network
-      //chordActor ! "simulateChord"
+      chordActor ! "startNetwork"
     }
     catch {
       case e: NumberFormatException => {
