@@ -13,10 +13,12 @@
     </properties>
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/../.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.11.0.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.11.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/../.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.11.0-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.11.0-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

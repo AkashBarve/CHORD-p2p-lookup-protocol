@@ -1,28 +1,31 @@
 import akka.actor.{Actor, ActorRef}
-
+import akka.actor.Props
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 case class closeProgram()
 
 class ChordActor(numNodes: Int, numReq: Int) extends Actor {
-  var nodes = new ArrayBuffer[ActorRef]()
+  //var nodes = new ArrayBuffer[ActorRef]()
   val M = Math.ceil(Math.log(numNodes) / Math.log(2.0)).toInt
-
+  var nodes = Array.ofDim[ActorRef](math.pow(2, M).toInt)
 
   override def receive: Receive = {
     case "startNetwork" =>
       val nodeIds = new mutable.HashSet[Int]()
+      val joiningNodeIds = new mutable.HashSet[Int]()
       var nodeId = 0
       for (i <- 1 to numNodes) {
         do {
           nodeId = Hashify.getRandomId(M)
+          //nodeId = Hashify.getRandomId(100)
         } while (nodeIds.contains(nodeId))
         nodeIds.add(nodeId)
       }
-      println(nodeIds)
+      println("Initial Node Ids: "+nodeIds)
       val sortedNodeIds = nodeIds.toSeq.sorted
       for (x <- sortedNodeIds) {
         var idx = sortedNodeIds.indexOf(x)
+        nodes(sortedNodeIds(idx)) = context.system.actorOf(Props(new ChordNode(x, sortedNodeIds, M)))
         var predecessor = 0
         var successor = 0
         var fingertable = Array.ofDim[String](M)
@@ -72,9 +75,25 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
           var printnode =  fingertable(i).split(",")
           println(x + " + " + math.pow(2,i) + ", " + printnode(1))
         }
-        //nodes += context.actorOf(Props(new ChordNode(x, sortedNodeIds)), x.toString)
+        //nodes += context.actorOf(Props(new ChordNode(x, sortedNodeIds, M)), x.toString)
         //nodes ! InitNode(x, sortedNodeIds)
       }
+
+      //Nodes to Join
+      for (i <- 1 to 4) {
+        do {
+          nodeId = Hashify.getRandomId(M)
+        } while (nodeIds.contains(nodeId))
+        joiningNodeIds.add(nodeId)
+      }
+      println("Joining Node Ids : "+joiningNodeIds)
+      val sortedJoiningNodeIds = joiningNodeIds.toSeq.sorted
+      for (x <- sortedJoiningNodeIds) {
+        var nIdx = sortedJoiningNodeIds.indexOf(x)
+        nodes(sortedJoiningNodeIds(nIdx)) = context.system.actorOf(Props(new ChordNode(x, sortedJoiningNodeIds, M)))
+        nodes(sortedJoiningNodeIds(nIdx)) ! join(sortedJoiningNodeIds(nIdx), nodes(sortedJoiningNodeIds(0)), nodes, numReq)
+      }
+
 
 
     case closeProgram() =>

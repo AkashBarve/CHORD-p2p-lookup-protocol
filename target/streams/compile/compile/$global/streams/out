@@ -1,4 +1,2 @@
-[0m[[0m[31merror[0m] [0m[0m/home/nimrod/Chord-final/src/main/scala/ChordActor.scala:52:42: value foreach is not a member of Int[0m
-[0m[[0m[31merror[0m] [0m[0m            for (c <- sortedNodeIds.size - 1) {[0m
-[0m[[0m[31merror[0m] [0m[0m                                         ^[0m
-[0m[[0m[31merror[0m] [0m[0mone error found[0m
+[0m[[0m[0mdebug[0m] [0m[0mAcquiring lock on file /Users/swarabarnasarkar1/Documents/cp/CHORD-p2p-lookup-protocol/project/target/.sbt-compilation-infos/chord-p2p-lookup-protocol-compile/.sbt-idea-lock ...[0m
+[0m[[0m[0mdebug[0m] [0m[0mReleasing lock on file /Users/swarabarnasarkar1/Documents/cp/CHORD-p2p-lookup-protocol/project/target/.sbt-compilation-infos/chord-p2p-lookup-protocol-compile/.sbt-idea-lock.[0m
