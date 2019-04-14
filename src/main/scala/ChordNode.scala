@@ -13,10 +13,15 @@ case class updateOthersFingerTable()
 case class join(joiningNodeId: Int, knownNode: ActorRef, networkNodes: Array[ActorRef], numRequests: Int)
 case class updateKeys()
 case class updateFinger(affectedNodes: List[Int], updatedValue: Int)
-
+case class setPredecessor(predecessor : Int)
+case class setSuccessor(successor : Int)
+case class setFingerTable(fingertable : Array[String])
+case class setNodeKeys(predecessor : Int)
 
 class ChordNode(Id: Int, numNodes: Seq[Int], M: Int) extends Actor {
-  var nodeId: Int = 0
+  var nodeId: Int = Id
+  //println("***************************")
+  println("creating node " + nodeId)
   var successor: Int = 0
   var predecessor: Int = 0
   var fingerTable = Array.ofDim[String](M)
@@ -30,9 +35,31 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int) extends Actor {
   var nodeSpace: Int = math.pow(2, M).toInt
   var knownNodeObj: ChordNode = null
   var nodesObj: Array[ChordNode] = Array.ofDim[ChordNode](nodeSpace)
+  var KeyRange :  Array[Int] = new Array[Int](2)
   //override def receive: Receive = ???
 
   def receive = {
+
+    case setPredecessor(predecessor) => {
+      this.predecessor = predecessor
+      println("predecessor for " + nodeId + " is " + this.predecessor)
+    }
+    case setSuccessor(successor) => {
+      this.successor = successor
+      println("successor for " + nodeId  +" is " + this.successor);
+    }
+    case setFingerTable(fingertable) => {
+     this.fingerTable = fingertable
+      println("fingertable for " + nodeId + " is of length" + fingerTable.size)
+//      for(i <- 0 to this.fingerTable.size - 1) {
+//        var printnode =  this.fingerTable(i).split(",")
+//        println(nodeId + " + " + math.pow(2,i) + ", " + printnode(1))
+//      }
+    }
+    case setNodeKeys(predecessor) => {
+      this.KeyRange(0) = predecessor + 1
+      this.KeyRange(1) = nodeId
+    }
     case join(joinId: Int, kNode: ActorRef, allNodes: Array[ActorRef], requestNumber: Int) => {
       nodeId = joinId
       knownNode = kNode
@@ -51,7 +78,7 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int) extends Actor {
         }
 
       }
-      println("case join for "+nodeId)
+      println("case join for "+ nodeId)
       context.system.scheduler.scheduleOnce(FiniteDuration(3000, TimeUnit.MILLISECONDS), self, updateOthersFingerTable())
 
     }

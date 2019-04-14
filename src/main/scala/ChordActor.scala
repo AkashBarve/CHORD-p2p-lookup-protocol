@@ -1,13 +1,19 @@
-import akka.actor.{Actor, ActorRef}
-import akka.actor.Props
+import java.util.concurrent.{ThreadLocalRandom, TimeUnit}
+
+import akka.actor.{Actor, ActorRef, Props}
+
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.FiniteDuration
 case class closeProgram()
+case class StartRequests(minKey : Int, maxkey : Int)
 
 class ChordActor(numNodes: Int, numReq: Int) extends Actor {
   //var nodes = new ArrayBuffer[ActorRef]()
   val M = Math.ceil(Math.log(numNodes) / Math.log(2.0)).toInt
   var nodes = Array.ofDim[ActorRef](math.pow(2, M).toInt)
+  var requestKeyPool = Array.ofDim[ActorRef](numReq)
+
 
   override def receive: Receive = {
     case "startNetwork" =>
@@ -23,6 +29,8 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
       }
       println("Initial Node Ids: "+nodeIds)
       val sortedNodeIds = nodeIds.toSeq.sorted
+      val minKey = sortedNodeIds(0);
+      val maxKey = sortedNodeIds(numNodes - 1)
       for (x <- sortedNodeIds) {
         var idx = sortedNodeIds.indexOf(x)
         nodes(sortedNodeIds(idx)) = context.system.actorOf(Props(new ChordNode(x, sortedNodeIds, M)))
@@ -65,34 +73,55 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
           //println("fingerval " + correspondingNode)
 
         }
+        nodes(sortedNodeIds(idx)) ! setPredecessor(predecessor)
+        nodes(sortedNodeIds(idx)) ! setSuccessor(successor)
+        nodes(sortedNodeIds(idx)) ! setFingerTable(fingertable)
+        nodes(sortedNodeIds(idx)) ! setNodeKeys(predecessor)
 
 
-        println("creating node " + x)
-        println("successor " + successor)
-        println("predecessor " + predecessor)
-        println("fingertable :")
-        for(i <- 0 to fingertable.size - 1) {
-          var printnode =  fingertable(i).split(",")
-          println(x + " + " + math.pow(2,i) + ", " + printnode(1))
-        }
+//        println("successor " + successor)
+//        println("predecessor " + predecessor)
+//
         //nodes += context.actorOf(Props(new ChordNode(x, sortedNodeIds, M)), x.toString)
         //nodes ! InitNode(x, sortedNodeIds)
       }
+      context.system.scheduler.scheduleOnce(FiniteDuration(5, TimeUnit.SECONDS), self, StartRequests(minKey, maxKey))
 
       //Nodes to Join
-      for (i <- 1 to 4) {
+      //Todo: Note from Akash: The maximum number of nodes we can have as per the paper is M, these are extra and would require additional logic to not spawn some of the earlier nodes as well as dynamic update of finger table etc
+//      for (i <- 1 to 4) {
+//        do {
+//          nodeId = Hashify.getRandomId(M)
+//        } while (nodeIds.contains(nodeId))
+//        joiningNodeIds.add(nodeId)
+//      }
+//      println("Joining Node Ids : "+joiningNodeIds)
+//      val sortedJoiningNodeIds = joiningNodeIds.toSeq.sorted
+//      for (x <- sortedJoiningNodeIds) {
+//        var nIdx = sortedJoiningNodeIds.indexOf(x)
+//        nodes(sortedJoiningNodeIds(nIdx)) = context.system.actorOf(Props(new ChordNode(x, sortedJoiningNodeIds, M)))
+//        nodes(sortedJoiningNodeIds(nIdx)) ! join(sortedJoiningNodeIds(nIdx), nodes(sortedJoiningNodeIds(0)), nodes, numReq)
+//      }
+    case StartRequests(minKey, maxKey) => {
+      println("starting " + numReq + " requests...")
+      val KeysToReq = new mutable.HashSet[Int]()
+      var random = -1
+      for (i <- 1 to numReq) {
         do {
-          nodeId = Hashify.getRandomId(M)
-        } while (nodeIds.contains(nodeId))
-        joiningNodeIds.add(nodeId)
+          random = ThreadLocalRandom.current().nextInt(minKey, maxKey + 1)
+        } while (KeysToReq.contains(random))
+        KeysToReq.add(random)
       }
-      println("Joining Node Ids : "+joiningNodeIds)
-      val sortedJoiningNodeIds = joiningNodeIds.toSeq.sorted
-      for (x <- sortedJoiningNodeIds) {
-        var nIdx = sortedJoiningNodeIds.indexOf(x)
-        nodes(sortedJoiningNodeIds(nIdx)) = context.system.actorOf(Props(new ChordNode(x, sortedJoiningNodeIds, M)))
-        nodes(sortedJoiningNodeIds(nIdx)) ! join(sortedJoiningNodeIds(nIdx), nodes(sortedJoiningNodeIds(0)), nodes, numReq)
+      val keysToReqSeq = KeysToReq.toSeq
+      println("Keys the system requests: " + KeysToReq)
+      var ctr : Int = 0
+      for (key <- keysToReqSeq) {
+        requestKeyPool(keysToReqSeq.indexOf(key)) = context.system.actorOf(Props(new ChordKeyRequest(minKey)))
+        requestKeyPool(keysToReqSeq.indexOf(key)) ! findKey(key)
+
       }
+
+    }
 
 
 
