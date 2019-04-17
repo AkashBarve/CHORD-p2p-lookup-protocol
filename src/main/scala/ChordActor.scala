@@ -1,4 +1,4 @@
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.{ThreadLocalRandom, TimeUnit}
 
 import akka.actor.{Actor, ActorRef, Props}
 
@@ -104,9 +104,17 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
 //      }
     case StartRequests(nodeList) => {
       println("starting " + numReq + " requests...")
-      val nodeListUnordered = nodeList.toSeq
+      val nodesToReqFrom  = new mutable.HashSet[Int]
+      var tempNode = 0
+      while (nodesToReqFrom.size <= numReq) {
+        tempNode = ThreadLocalRandom.current().nextInt(nodeList.min, nodeList.max + 1)
+        if(nodesToReqFrom.contains(tempNode)) {
+          nodesToReqFrom.add(tempNode)
+        }
+      }
+      val reqNodeList = nodesToReqFrom.toSeq
       for (i <- 0 to nodeList.size)
-        nodes(nodeListUnordered(i)) ! reqFromNode(nodeListUnordered.min, nodeListUnordered.max)
+        nodes(reqNodeList(i)) ! reqFromNode(nodeList.min, nodeList.max)
       }
 
 
