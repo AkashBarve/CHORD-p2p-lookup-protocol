@@ -140,9 +140,22 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int) extends Actor
       context.system.scheduler.scheduleOnce(FiniteDuration(3000, TimeUnit.MILLISECONDS), self, updateKeys())
 
     }
-    case updateFinger(aNodes: List[Int], newValue: Int) => {
-      //println("TODO: update finger")
-      //TODO
+    case updateFinger(nodesAffected: List[Int], newValue: Int) => {
+      for( index <- 0 to m-1) {
+        fingerTableStart(i) = fingerTable(i).split(",")(0).toInt
+        fingerTableNode(i) = fingerTable(i).split(",")(1).toInt
+      }
+
+      for (index <- 0 to aNode.length-1) {
+        if (fingerTableStart.contains(nodesAffected(i))) {
+          fingerTable(fingerTableStart.indexOf(nodesAffected(i))) = fingerTable(fingerTableStart.indexOf(nodesAffected(i))).split(",")(0) + "," + newValue
+        } 
+      }
+
+      for (index <- 0 to m-1) {
+        fingerTableStart(i) = fingerTable(i).split(",")(0).toInt
+        fingerTableNode(i) = fingerTable(i).split(",")(1).toInt
+      }
 
     }
     case updateKeys() => {
