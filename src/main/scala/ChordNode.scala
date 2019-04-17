@@ -1,4 +1,4 @@
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.{ThreadLocalRandom, TimeUnit}
 
 import akka.actor.{Actor, ActorRef}
 
@@ -17,17 +17,21 @@ case class setPredecessor(predecessor : Int)
 case class setSuccessor(successor : Int)
 case class setFingerTable(fingertable : Array[String])
 case class setNodeKeys(predecessor : Int)
+case class getFingerTable()
+case class reqFromNode(minKey : Int, maxKey : Int)
+case class findKey(key: Int, nodeOfOrigin: Int)
 
-class ChordNode(Id: Int, numNodes: Seq[Int], M: Int) extends Actor {
+class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int) extends Actor {
   var nodeId: Int = Id
   //println("***************************")
   println("creating node " + nodeId)
   var successor: Int = 0
   var predecessor: Int = 0
   var fingerTable = Array.ofDim[String](M)
-  var m: Int = 0
+  var requestsDone : Int = 0
+  var m: Int = M
   var allKeys: List[Int] = List()
-  var numRequests: Int = 0
+  var numRequests: Int = numReq
   var fingerTableStart = Array.ofDim[Int](M)
   var fingerTableNode = Array.ofDim[Int](M)
   var networkNodes: Array[ActorRef] = null
@@ -39,6 +43,17 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int) extends Actor {
   //override def receive: Receive = ???
 
   def receive = {
+    case reqFromNode(minKey, maxKey) => {
+      var key = ThreadLocalRandom.current().nextInt(minKey, maxKey + 1)
+      requestsDone += 1
+      if(requestsDone <= numRequests)
+        self ! findKey(key, nodeId)
+    }
+
+    case findKey(key, nodeOfOrigin) => {
+
+    }
+
 
     case setPredecessor(predecessor) => {
       this.predecessor = predecessor
