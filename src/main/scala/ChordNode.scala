@@ -28,7 +28,6 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int) extends Actor
   var successor: Int = 0
   var predecessor: Int = 0
   var fingerTable = Array.ofDim[String](M)
-  var requestsDone : Int = 0
   var m: Int = M
   var allKeys: List[Int] = List()
   var numRequests: Int = numReq
@@ -45,9 +44,7 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int) extends Actor
   def receive = {
     case reqFromNode(minKey, maxKey) => {
       var key = ThreadLocalRandom.current().nextInt(minKey, maxKey + 1)
-      requestsDone += 1
-      if(requestsDone <= numRequests)
-        self ! findKey(key, nodeId)
+      self ! findKey(key, nodeId)
     }
 
     case findKey(key, nodeOfOrigin) => {
