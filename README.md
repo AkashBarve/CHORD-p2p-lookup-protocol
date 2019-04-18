@@ -7,8 +7,15 @@ Project for COP5618 Concurrent Programming, Spring 2019
 3. Swarabarna Sarkar (Swarabarna)
 
 ##### Contributions:
+Akash Barve : Creation of Node and Chord Actor and generation of fingertable. Also, implementation Consistent Hashing.
+Nanda Kishore Sunki : Implementation of the lookup protocol. Also, calculation of hopcount using Actors.
+Swarabarna Sarkar : Addition of nodes to the network and updation of finger table affected by the add.
 
-##### Descrirption of the project:
+##### Description of the project:
+Chord protocol provides method to lookup location of keys and their values in an efficient manner. It also has the ability to balance load and require less movement of keys when nodes join or leave the network.
+The protocol is a fast distributed computation of a hash function mapping keys to nodes responsible for them. Chord assigns keys to nodes with consistent hashing, which has several desirable properties.
+A Chord node needs only a small amount of routing information about other nodes. Because this information is distributed, a node resolves the hash function by communicating with other nodes.
+In an N-node network, each node maintains information about only O(log N ) other nodes, and a lookup requires O(log N ) messages.
 
 ##### Building and running the project:
 Preferred versions:
