@@ -25,7 +25,7 @@ case class requestDone(totalHops: Int)
 Class for Chord Node actor.
  */
 class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor : ActorRef) extends Actor {
-  var nodeId: Int = 0
+  var nodeId: Int = Id
   //println("***************************")
   println("creating node " + nodeId)
   var successor: Int = 0
@@ -54,7 +54,6 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
       println("Running Lookup for key" + key)
       //fetches ActorRef of other nodes
       this.nodeFetch = nodes
-      println("nodeFetch" + nodeFetch(5))
       self ! findKey(key, nodeId, 0)
     }
      /*
@@ -70,13 +69,12 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
       //Every time a node is contacted for lookup, it is considered a hop
       var newHopCount = hopCount + 1
 
-      println("value of m "+ m + " " + fingerTable)
       if(newHopCount > 10) {
         self ! requestDone(newHopCount)
       }
       else {
         //checks if key is between the current node's predecessor and current node's id. if yes, lookup is done!
-        if (key >= this.predecessor + 1 || key <= this.nodeId) {
+        if (key >= this.predecessor + 1 && key <= this.nodeId) {
           try {
             //println("I am" + this.nodeId + "searching for " + key + "in if")
             self ! requestDone(newHopCount)

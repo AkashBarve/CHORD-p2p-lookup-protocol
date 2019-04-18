@@ -13,7 +13,7 @@ Class for chord network actor.
 This class hold the attributes for the network such as M, array of nodes and has receive methods to
 receive messages from other clients.
  */
-class ChordActor(numNodes: Int, numReq: Int) extends Actor {
+class ChordActor(numNodes: Int, numReq: Int, waitTime: Int) extends Actor {
   val M = Math.ceil(Math.log(numNodes) / Math.log(2.0)).toInt
   var nodes = Array.ofDim[ActorRef](math.pow(2, M).toInt)
   //println(Math.pow(2,M))
@@ -85,7 +85,7 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
           }
 
           fingertable(i) = (entry + "," + correspondingNode)
-          println("fingerval " + correspondingNode)
+          //println("fingerval " + correspondingNode)
 
         }
 
@@ -104,8 +104,8 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
       }
 
       println("Waiting for a few seconds to let the system stabilize.")
-      context.system.scheduler.scheduleOnce(FiniteDuration(25, TimeUnit.SECONDS), self, StartRequests(sortedNodeIds))
-
+      println("Your wait time is " + waitTime + " seconds")
+      context.system.scheduler.scheduleOnce(FiniteDuration(waitTime, TimeUnit.SECONDS), self, StartRequests(sortedNodeIds))
       // Receive messages to start requests.
     case StartRequests(nodeList) => {
       println("starting " + numReq + " requests...")

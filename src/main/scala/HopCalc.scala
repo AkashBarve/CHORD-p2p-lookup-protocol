@@ -22,9 +22,12 @@ class HopCalc(totalRequests: Int) extends Actor {
                 //println(requestsReceived)
                 var averageHops: Double = totalHops.toDouble/requestsReceived
                 println("Total hops received is " + totalHops)
-
+                println("Total successful requests " + requestsReceived)
                 println("Average hops for each request is " + averageHops)
+                self ! closeProgram()
             }
         }
+        case closeProgram() =>
+            context.system.shutdown()
     }
 }
