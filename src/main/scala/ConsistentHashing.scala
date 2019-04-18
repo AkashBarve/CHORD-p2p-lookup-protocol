@@ -5,6 +5,7 @@ import scala.util.Random
 
 object Hashify {
 
+  //Function to generate hash value of a given input.
   def getHash(str: String, i: Int): Int = {
     val shaId = MessageDigest.getInstance("SHA-1")
     val hash = shaId.digest(str.getBytes("UTF-8"))
