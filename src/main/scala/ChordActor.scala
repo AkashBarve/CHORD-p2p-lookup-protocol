@@ -1,4 +1,4 @@
-import java.util.concurrent.{ThreadLocalRandom, TimeUnit}
+import java.util.concurrent.TimeUnit
 
 import akka.actor.{Actor, ActorRef, Props}
 
@@ -6,7 +6,7 @@ import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.FiniteDuration
 case class closeProgram()
-case class StartRequests(nodeList : mutable.HashSet[Int])
+case class StartRequests(nodeList : Seq[Int])
 
 class ChordActor(numNodes: Int, numReq: Int) extends Actor {
   //var nodes = new ArrayBuffer[ActorRef]()
@@ -88,7 +88,7 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
         //nodes += context.actorOf(Props(new ChordNode(x, sortedNodeIds, M)), x.toString)
         //nodes ! InitNode(x, sortedNodeIds)
       }
-      context.system.scheduler.scheduleOnce(FiniteDuration(5, TimeUnit.SECONDS), self, StartRequests(nodeIds))
+      context.system.scheduler.scheduleOnce(FiniteDuration(5, TimeUnit.SECONDS), self, StartRequests(sortedNodeIds))
       //Nodes to Join
       //Todo: Note from Akash: The maximum number of nodes we can have as per the paper is M, these are extra and would require additional logic to not spawn some of the earlier nodes as well as dynamic update of finger table etc
 //      for (i <- 1 to 4) {
@@ -106,18 +106,32 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
 //      }
     case StartRequests(nodeList) => {
       println("starting " + numReq + " requests...")
-      val nodesToReqFrom  = new mutable.HashSet[Int]
-      var tempNode = 0
-      while (nodesToReqFrom.size <= numReq) {
-        tempNode = ThreadLocalRandom.current().nextInt(nodeList.min, nodeList.max + 1)
-        if(nodesToReqFrom.contains(tempNode)) {
-          nodesToReqFrom.add(tempNode)
+      println(nodeList.size)
+      for(i <- 0 to nodeList.size - 1) {
+        {
+          for(j <- 0 to numReq - 1) {
+            nodes(nodeList(i)) ! reqFromNode(nodeList.min, nodeList.max, nodes)
+
+          }
         }
       }
-      val reqNodeList = nodesToReqFrom.toSeq
-      for (i <- 0 to nodeList.size)
-        nodes(reqNodeList(i)) ! reqFromNode(nodeList.min, nodeList.max)
+//      val nodesToReqFrom  = new mutable.HashSet[Int]
+//      var tempNode = 0
+//      for(i <- 0 to numReq - 1) {
+//        do {
+//          tempNode = ThreadLocalRandom.current().nextInt(nodeList.min, nodeList.max + 1)
+//        } while (nodesToReqFrom.contains(tempNode))
+//        nodesToReqFrom.add(tempNode)
+//      }
+//      val reqNodeList = nodesToReqFrom.toSeq
+//      println(reqNodeList)
+//      for (i <- 0 to reqNodeList.size-1) {
+//        var tempNode1 : Int = reqNodeList(i)
+//        var j : Int= nodeList.indexOf(tempNode)
+//        nodes(nodeList(j)) ! sendNodes(nodes)
+//        nodes(nodeList(j)) ! reqFromNode(nodeList.min, nodeList.max)
       }
+      //}
 
 
     case closeProgram() =>

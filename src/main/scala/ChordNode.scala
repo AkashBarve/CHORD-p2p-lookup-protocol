@@ -4,6 +4,8 @@ import akka.actor.{Actor, ActorRef}
 
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.ExecutionContext.Implicits.global
+import akka.dispatch.Futures
+import akka.pattern.ask
 
 case class getKnownObj()
 case class setKnownObj(receivedObj: ChordNode)
@@ -18,9 +20,10 @@ case class setSuccessor(successor : Int)
 case class setFingerTable(fingertable : Array[String])
 case class setNodeKeys(predecessor : Int)
 case class getFingerTable()
-case class reqFromNode(minKey : Int, maxKey : Int)
+case class reqFromNode(minKey : Int, maxKey : Int, nodes : Array[ActorRef])
 case class findKey(key: Int, nodeOfOrigin: Int, hopCount: Int)
 case class requestDone(totalHops: Int)
+//case class sendNodes(nodeFetch : Array[ActorRef])
 
 class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor : ActorRef) extends Actor {
   var nodeId: Int = Id
@@ -41,12 +44,14 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
   var nodesObj: Array[ChordNode] = Array.ofDim[ChordNode](nodeSpace)
   var KeyRange :  Array[Int] = new Array[Int](2)
   var calcHops:ActorRef = HopCalcActor
+  var nodeFetch : Array[ActorRef] = null
   //override def receive: Receive = ???
 
   def receive = {
-    case reqFromNode(minKey, maxKey) => {
+    case reqFromNode(minKey, maxKey, nodes) => {
       var key = ThreadLocalRandom.current().nextInt(minKey, maxKey + 1)
-      self ! findKey(key, nodeId, 0)
+      println("Running Lookup for key" + key)
+      self ? findKey(key, nodeId, 0)
     }
 
     case requestDone(hopCount: Int) => {
@@ -55,7 +60,7 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
 
     case findKey(key, nodeOfOrigin, hopCount) => {
       var startNode = nodeOfOrigin
-      hopCount += 1
+      var newHopCount = hopCount + 1
 
       var fingerTableChordIdentifier = Array.ofDim[Int](M)
       var fingerTableNodeVal = Array.ofDim[Int](M)
@@ -67,16 +72,16 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
 
 
       if (key >= this.predecessor+1 && key <= this.nodeId) {
-        networkNodes(nodeOfOrigin) ! requestDone(hopCount)
+        nodeFetch(nodeOfOrigin) ! requestDone(newHopCount)
       } else if (fingerTableChordIdentifier.contains(key)) {
-        networkNodes(fingerTableNodeVal(fingerTableChordIdentifier.indexOf(key))) ! findKey(key, startNode, hopCount)
+        nodeFetch(fingerTableNodeVal(fingerTableChordIdentifier.indexOf(key))) ! findKey(key, startNode, newHopCount)
       } else {
           if (checkForCycle(key, fingerTableChordIdentifier(m-1), fingerTableChordIdentifier(0))) {
-            networkNodes(fingerTableNodeVal(m-1)) ! findKey(key, startNode, hopCount)
+            nodeFetch(fingerTableNodeVal(m-1)) ! findKey(key, startNode, newHopCount)
           } else {
               for (index <- 0 to m-2) {
                 if (checkForCycle(key, fingerTableChordIdentifier(index), fingerTableChordIdentifier(index+1))) {
-                  networkNodes(fingerTableNodeVal(index)) ! findKey(key, startNode, hopCount)
+                  nodeFetch(fingerTableNodeVal(index)) ! findKey(key, startNode, newHopCount)
                 }
               }
           }
@@ -105,6 +110,7 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
       this.KeyRange(0) = predecessor + 1
       this.KeyRange(1) = nodeId
     }
+
 
     case join(joinId: Int, kNode: ActorRef, allNodes: Array[ActorRef], requestNumber: Int) => {
       nodeId = joinId
