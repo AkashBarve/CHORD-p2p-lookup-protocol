@@ -14,7 +14,7 @@ class HopCalc(totalRequests: Int) extends Actor {
             if (requestsReceived == totalRequests) {
                 //println(totalHops)
                 //println(requestsReceived)
-                var averageHops: Double = Math.floor(totalHops/requestsReceived)
+                var averageHops: Double = totalHops/requestsReceived
                 println("Average hops for each request is " + averageHops)
             }
         }
