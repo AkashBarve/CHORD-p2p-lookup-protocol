@@ -78,7 +78,6 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
         //checks if key is between the current node's predecessor and current node's id. if yes, lookup is done!
         if (key >= this.predecessor + 1 || key <= this.nodeId) {
           try {
-            //println("I am" + this.nodeId + "searching for " + key + "in if")
             self ! requestDone(newHopCount)
           }
           catch {
@@ -87,7 +86,6 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
 
         }//checks if the key can directly be reached using the current node's finger table
         else if (fingerTableChordIdentifier.contains(key)) {
-          //println("I am" + this.nodeId + "searching for " + key + "in else if")
           try {
             nodeFetch(fingerTableNodeVal(fingerTableChordIdentifier.indexOf(key))) ! findKey(key, startNode, newHopCount)
           }
@@ -105,7 +103,6 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
             }
           }
           for (i <- 0 to M - 2) {
-            //println("I am" + this.nodeId + "searching for " + key + "in else")
             if (checkForCycle(key, fingerTableChordIdentifier(i), fingerTableChordIdentifier(i + 1))) {
               try{
                 nodeFetch(fingerTableNodeVal(i + 1)) ! findKey(key, startNode, newHopCount)
