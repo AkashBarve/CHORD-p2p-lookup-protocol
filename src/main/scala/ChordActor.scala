@@ -34,7 +34,7 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
       val sortedNodeIds = nodeIds.toSeq.sorted
       val minKey = sortedNodeIds(0);
       val maxKey = sortedNodeIds(numNodes - 1)
-      HopCalcActor = context.system.actorOf(Props(new HopCalc(numReq)))
+      HopCalcActor = context.system.actorOf(Props(new HopCalc(numReq*numNodes)))
       for (x <- sortedNodeIds) {
         var idx = sortedNodeIds.indexOf(x)
         nodes(sortedNodeIds(idx)) = context.system.actorOf(Props(new ChordNode(x, sortedNodeIds, M, numReq, HopCalcActor)))
