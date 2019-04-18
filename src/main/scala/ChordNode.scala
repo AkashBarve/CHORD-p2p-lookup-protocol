@@ -51,7 +51,7 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
     case reqFromNode(minKey, maxKey, nodes) => {
       //generating key to lookup
       var key = ThreadLocalRandom.current().nextInt(minKey, maxKey + 1)
-      println("Running Lookup for key" + key)
+      println("Running Lookup for key " + key)
       //fetches ActorRef of other nodes
       this.nodeFetch = nodes
       self ! findKey(key, nodeId, 0)
