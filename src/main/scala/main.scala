@@ -2,8 +2,8 @@ import akka.actor.{ActorSystem, Props}
 
 object Main extends App {
   // Assert to check if we have exactly two arguments
-  if (args.length != 3) {
-    println("Two arguments needed")
+  if (args.length != 4) {
+    println("Three arguments needed")
   }
   else {
     try {
