@@ -11,6 +11,9 @@ Project for COP5618 Concurrent Programming, Spring 2019
 ##### Descrirption of the project:
 
 ##### Building and running the project:
+Preferred versions:
+JDK : 1.8.0
+Scala: 2.11.0
 
 1. To run the project from command line/ Terminal:
                     
