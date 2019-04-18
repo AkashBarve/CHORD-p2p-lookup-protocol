@@ -9,12 +9,10 @@ case class closeProgram()
 case class StartRequests(nodeList : Seq[Int])
 
 class ChordActor(numNodes: Int, numReq: Int) extends Actor {
-  //var nodes = new ArrayBuffer[ActorRef]()
   val M = Math.ceil(Math.log(numNodes) / Math.log(2.0)).toInt
   var nodes = Array.ofDim[ActorRef](math.pow(2, M).toInt)
   println(Math.pow(2,M))
   var requestKeyPool = Array.ofDim[ActorRef](numReq)
-  //var nodeObj : ChordNode
   var HopCalcActor:ActorRef = null
 
 
@@ -26,7 +24,6 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
       for (i <- 1 to numNodes) {
         do {
           nodeId = Hashify.getRandomId(M)
-          //nodeId = Hashify.getRandomId(100)
         } while (nodeIds.contains(nodeId))
         nodeIds.add(nodeId)
       }
@@ -89,27 +86,13 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
         //nodes += context.actorOf(Props(new ChordNode(x, sortedNodeIds, M)), x.toString)
         //nodes ! InitNode(x, sortedNodeIds)
       }
+      println("Waiting for a few seconds to let the system stabilize.")
       context.system.scheduler.scheduleOnce(FiniteDuration(25, TimeUnit.SECONDS), self, StartRequests(sortedNodeIds))
-      //Nodes to Join
-      //Todo: Note from Akash: The maximum number of nodes we can have as per the paper is M, these are extra and would require additional logic to not spawn some of the earlier nodes as well as dynamic update of finger table etc
-//      for (i <- 1 to 4) {
-//        do {
-//          nodeId = Hashify.getRandomId(M)
-//        } while (nodeIds.contains(nodeId))
-//        joiningNodeIds.add(nodeId)
-//      }
-//      println("Joining Node Ids : "+joiningNodeIds)
-//      val sortedJoiningNodeIds = joiningNodeIds.toSeq.sorted
-//      for (x <- sortedJoiningNodeIds) {
-//        var nIdx = sortedJoiningNodeIds.indexOf(x)
-//        nodes(sortedJoiningNodeIds(nIdx)) = context.system.actorOf(Props(new ChordNode(x, sortedJoiningNodeIds, M)))
-//        nodes(sortedJoiningNodeIds(nIdx)) ! join(sortedJoiningNodeIds(nIdx), nodes(sortedJoiningNodeIds(0)), nodes, numReq)
-//      }
+
     case StartRequests(nodeList) => {
       println("starting " + numReq + " requests...")
       println(nodeList.size)
       println("nodes" + nodes(5))
- //
       for(i <- 0 to nodeList.size - 1) {
         {
           for (j <- 0 to numReq - 1) {
@@ -118,24 +101,7 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
           }
         }
       }
-//      }
-//      val nodesToReqFrom  = new mutable.HashSet[Int]
-//      var tempNode = 0
-//      for(i <- 0 to numReq - 1) {
-//        do {
-//          tempNode = ThreadLocalRandom.current().nextInt(nodeList.min, nodeList.max + 1)
-//        } while (nodesToReqFrom.contains(tempNode))
-//        nodesToReqFrom.add(tempNode)
-//      }
-//      val reqNodeList = nodesToReqFrom.toSeq
-//      println(reqNodeList)
-//      for (i <- 0 to reqNodeList.size-1) {
-//        var tempNode1 : Int = reqNodeList(i)
-//        var j : Int= nodeList.indexOf(tempNode)
-//        nodes(nodeList(j)) ! sendNodes(nodes)
-//        nodes(nodeList(j)) ! reqFromNode(nodeList.min, nodeList.max)
       }
-      //}
 
 
     case closeProgram() =>
