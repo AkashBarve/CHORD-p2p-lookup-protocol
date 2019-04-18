@@ -19,7 +19,7 @@ case class setFingerTable(fingertable : Array[String])
 case class setNodeKeys(predecessor : Int)
 case class getFingerTable()
 case class reqFromNode(minKey : Int, maxKey : Int)
-case class findKey(key: Int, nodeOfOrigin: Int)
+case class findKey(key: Int, nodeOfOrigin: Int, hopCount: Int)
 case class requestDone(totalHops: Int)
 
 class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor : ActorRef) extends Actor {
@@ -46,7 +46,7 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
   def receive = {
     case reqFromNode(minKey, maxKey) => {
       var key = ThreadLocalRandom.current().nextInt(minKey, maxKey + 1)
-      self ! findKey(key, nodeId)
+      self ! findKey(key, nodeId, 0)
     }
 
     case requestDone(hopCount: Int) => {
@@ -54,29 +54,29 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
     }
 
     case findKey(key, nodeOfOrigin, hopCount) => {
-      startNode = nodeOfOrigin
-      hopCount = hopCount+1
+      var startNode = nodeOfOrigin
+      hopCount += 1
 
       var fingerTableChordIdentifier = Array.ofDim[Int](M)
       var fingerTableNodeVal = Array.ofDim[Int](M)
 
       for (index <- 0 to m-1) {
-        fingerTableChordIdentifier(i) = fingerTable(i).split(",")(0).toInt
-        fingerTableNodeVal(i) = fingerTable(i).split(",")(1).toInt
+        fingerTableChordIdentifier(index) = fingerTable(index).split(",")(0).toInt
+        fingerTableNodeVal(index) = fingerTable(index).split(",")(1).toInt
       }
 
 
       if (key >= this.predecessor+1 && key <= this.nodeId) {
-        networkNodes(nodeofOrigin) ! requestDone(hopCount)
+        networkNodes(nodeOfOrigin) ! requestDone(hopCount)
       } else if (fingerTableChordIdentifier.contains(key)) {
-        networkNodes(fingerTableNodeVal(fingerTableChordIdentifier.indexOf(key))) ! lookupFingerTable(key, startNode, hopCount)
+        networkNodes(fingerTableNodeVal(fingerTableChordIdentifier.indexOf(key))) ! findKey(key, startNode, hopCount)
       } else {
           if (checkForCycle(key, fingerTableChordIdentifier(m-1), fingerTableChordIdentifier(0))) {
-            networkNodes(fingerTableNodeVal(m-1)) ! lookupFingerTable(key, startNode, hopCount)
+            networkNodes(fingerTableNodeVal(m-1)) ! findKey(key, startNode, hopCount)
           } else {
               for (index <- 0 to m-2) {
-                if (checkForCycle(key, fingerTableChordIdentifier(i), fingerTableChordIdentifier(i+1))) {
-                  networkNodes(fingerTableNodeVal(i)) ! lookupFingerTable(key, startNode, hopCount)
+                if (checkForCycle(key, fingerTableChordIdentifier(index), fingerTableChordIdentifier(index+1))) {
+                  networkNodes(fingerTableNodeVal(index)) ! findKey(key, startNode, hopCount)
                 }
               }
           }
@@ -173,19 +173,19 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
     }
     case updateFinger(nodesAffected: List[Int], newValue: Int) => {
       for( index <- 0 to m-1) {
-        fingerTableStart(i) = fingerTable(i).split(",")(0).toInt
-        fingerTableNode(i) = fingerTable(i).split(",")(1).toInt
+        fingerTableStart(index) = fingerTable(index).split(",")(0).toInt
+        fingerTableNode(index) = fingerTable(index).split(",")(1).toInt
       }
 
-      for (index <- 0 to aNode.length-1) {
-        if (fingerTableStart.contains(nodesAffected(i))) {
-          fingerTable(fingerTableStart.indexOf(nodesAffected(i))) = fingerTable(fingerTableStart.indexOf(nodesAffected(i))).split(",")(0) + "," + newValue
+      for (index <- 0 to nodesAffected.length-1) {
+        if (fingerTableStart.contains(nodesAffected(index))) {
+          fingerTable(fingerTableStart.indexOf(nodesAffected(index))) = fingerTable(fingerTableStart.indexOf(nodesAffected(index))).split(",")(0) + "," + newValue
         } 
       }
 
       for (index <- 0 to m-1) {
-        fingerTableStart(i) = fingerTable(i).split(",")(0).toInt
-        fingerTableNode(i) = fingerTable(i).split(",")(1).toInt
+        fingerTableStart(index) = fingerTable(index).split(",")(0).toInt
+        fingerTableNode(index) = fingerTable(index).split(",")(1).toInt
       }
 
     }
