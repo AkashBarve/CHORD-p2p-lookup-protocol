@@ -14,6 +14,7 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
   var nodes = Array.ofDim[ActorRef](math.pow(2, M).toInt)
   var requestKeyPool = Array.ofDim[ActorRef](numReq)
   //var nodeObj : ChordNode
+  var HopCalcActor:ActorRef = null
 
 
   override def receive: Receive = {
@@ -32,9 +33,10 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
       val sortedNodeIds = nodeIds.toSeq.sorted
       val minKey = sortedNodeIds(0);
       val maxKey = sortedNodeIds(numNodes - 1)
+      HopCalcActor = context.system.actorOf(Props(new HopCalc(numReq)))
       for (x <- sortedNodeIds) {
         var idx = sortedNodeIds.indexOf(x)
-        nodes(sortedNodeIds(idx)) = context.system.actorOf(Props(new ChordNode(x, sortedNodeIds, M, numReq)))
+        nodes(sortedNodeIds(idx)) = context.system.actorOf(Props(new ChordNode(x, sortedNodeIds, M, numReq, HopCalcActor)))
         var predecessor = 0
         var successor = 0
         var fingertable = Array.ofDim[String](M)

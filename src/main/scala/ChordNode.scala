@@ -20,8 +20,9 @@ case class setNodeKeys(predecessor : Int)
 case class getFingerTable()
 case class reqFromNode(minKey : Int, maxKey : Int)
 case class findKey(key: Int, nodeOfOrigin: Int)
+case class requestDone(totalHops: Int)
 
-class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int) extends Actor {
+class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor : ActorRef) extends Actor {
   var nodeId: Int = Id
   //println("***************************")
   println("creating node " + nodeId)
@@ -39,6 +40,7 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int) extends Actor
   var knownNodeObj: ChordNode = null
   var nodesObj: Array[ChordNode] = Array.ofDim[ChordNode](nodeSpace)
   var KeyRange :  Array[Int] = new Array[Int](2)
+  var calcHops:ActorRef = HopCalcActor
   //override def receive: Receive = ???
 
   def receive = {
@@ -47,10 +49,40 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int) extends Actor
       self ! findKey(key, nodeId)
     }
 
-    case findKey(key, nodeOfOrigin) => {
-
+    case requestDone(hopCount: Int) => {
+      calcHops ! getHops(hopCount)
     }
 
+    case findKey(key, nodeOfOrigin, hopCount) => {
+      startNode = nodeOfOrigin
+      hopCount = hopCount+1
+
+      var fingerTableChordIdentifier = Array.ofDim[Int](M)
+      var fingerTableNodeVal = Array.ofDim[Int](M)
+
+      for (index <- 0 to m-1) {
+        fingerTableChordIdentifier(i) = fingerTable(i).split(",")(0).toInt
+        fingerTableNodeVal(i) = fingerTable(i).split(",")(1).toInt
+      }
+
+
+      if (key >= this.predecessor+1 && key <= this.nodeId) {
+        networkNodes(nodeofOrigin) ! requestDone(hopCount)
+      } else if (fingerTableChordIdentifier.contains(key)) {
+        networkNodes(fingerTableNodeVal(fingerTableChordIdentifier.indexOf(key))) ! lookupFingerTable(key, startNode, hopCount)
+      } else {
+          if (checkForCycle(key, fingerTableChordIdentifier(m-1), fingerTableChordIdentifier(0))) {
+            networkNodes(fingerTableNodeVal(m-1)) ! lookupFingerTable(key, startNode, hopCount)
+          } else {
+              for (index <- 0 to m-2) {
+                if (checkForCycle(key, fingerTableChordIdentifier(i), fingerTableChordIdentifier(i+1))) {
+                  networkNodes(fingerTableNodeVal(i)) ! lookupFingerTable(key, startNode, hopCount)
+                }
+              }
+          }
+      }
+
+    }
 
     case setPredecessor(predecessor) => {
       this.predecessor = predecessor
@@ -68,10 +100,12 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int) extends Actor
 //        println(nodeId + " + " + math.pow(2,i) + ", " + printnode(1))
 //      }
     }
+    
     case setNodeKeys(predecessor) => {
       this.KeyRange(0) = predecessor + 1
       this.KeyRange(1) = nodeId
     }
+
     case join(joinId: Int, kNode: ActorRef, allNodes: Array[ActorRef], requestNumber: Int) => {
       nodeId = joinId
       knownNode = kNode
@@ -161,6 +195,24 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int) extends Actor
 
     }
 
+  }
+
+  def checkForCycle(nodeID: Int, first: Int, second: Int): Boolean = {
+    if (first < second) {
+      if (nodeID > first && nodeID < second) {
+        return true
+      }
+      else {
+        return false
+      }
+    } else {
+      if (nodeID > first || nodeID < second) {
+        return true
+      }
+      else {
+        return false
+      }
+    }
   }
 
 }
