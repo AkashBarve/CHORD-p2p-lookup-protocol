@@ -11,10 +11,10 @@ object Main extends App {
       val numNodes = args(0).toInt
       val numReq = args(1).toInt
       val waitTime = args(2).toInt
-      val system = ActorSystem("ChordSystem") //define ActorSystem to get things started
+      val system = ActorSystem("ChordSystem")
       // default Actor constructor
-      val chordActor = system.actorOf(Props(new ChordActor(numNodes, numReq, waitTime)), name = "chordactor") //actorof creates actor instance
-      //now that we have instance of an actor send message to simulate Chord network
+      val chordActor = system.actorOf(Props(new ChordActor(numNodes, numReq, waitTime)), name = "chordactor")
+      //Send message to start Chord network
       chordActor ! "startNetwork"
     }
     catch {
