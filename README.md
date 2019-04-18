@@ -7,7 +7,8 @@ Project for COP5618 Concurrent Programming, Spring 2019
 3. Swarabarna Sarkar (Swarabarna)
 
 ##### Contributions:
-Akash Barve : Creation of Node and Chord Actor and generation of fingertable. Also, implementation Consistent Hashing.
+Akash Barve : Creation of Chord Actor, Nodes as Actors and generation of fingerTable, predecessor and successor by passing messages among Actors.
+ Also, implementation of passing the key requests to the required Actor for lookup protocol.
 Nanda Kishore Sunki : Implementation of the lookup protocol. Also, calculation of hopcount using Actors.
 Swarabarna Sarkar : Addition of nodes to the network and updation of finger table affected by the add.
 
@@ -34,9 +35,9 @@ Scala: 2.11.0
     2. On your terminal move to the project directory ~/CHORD-p2p-lookup-protocol/
     3. To compile use command "sbt compile"
     4. To run "sbt run <Number of nodes to start> <Number of requests to generate> <Time to Stabilize Network (in secs)>"
-    eg. sbt run 100 10 10
+    eg. sbt run 30 10 10
     5. You can also use "sbt compile run <Number of nodes to start> <Number of requests to generate> <Time to Stabilize Network (in secs)>"
-    eg. sbt compile run 100 10 10"
+    eg. sbt compile run 30 10 10"
 
 Note: The sbt version and library compatibilities might sometimes cause a error saying some dependency could not be compiled. 
 To solve this you can run the project on an sbt shell on IntelliJ
@@ -50,8 +51,8 @@ To solve this you can run the project on an sbt shell on IntelliJ
     3. Select project jdk as java jdk version 1.8, and click Next.
     4. Build the program and wait for the program to finish building.
     5. Open an sbt shell. After the shell is initialized we can see "sbt:Chord-final". Then run
-    the command "sbt run <Number of nodes to start> <Number of requests to generate> <Time to Stabilize Network (in secs)>"
-    eg. sbt run 100 10 10
+    the command "run <Number of nodes to start> <Number of requests to generate> <Time to Stabilize Network (in secs)>"
+    eg. run 30 10 10
 
 
 
