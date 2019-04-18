@@ -12,6 +12,7 @@ class ChordActor(numNodes: Int, numReq: Int) extends Actor {
   //var nodes = new ArrayBuffer[ActorRef]()
   val M = Math.ceil(Math.log(numNodes) / Math.log(2.0)).toInt
   var nodes = Array.ofDim[ActorRef](math.pow(2, M).toInt)
+  println(Math.pow(2,M))
   var requestKeyPool = Array.ofDim[ActorRef](numReq)
   //var nodeObj : ChordNode
   var HopCalcActor:ActorRef = null

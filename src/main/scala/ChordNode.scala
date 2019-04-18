@@ -51,7 +51,8 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
     case reqFromNode(minKey, maxKey, nodes) => {
       var key = ThreadLocalRandom.current().nextInt(minKey, maxKey + 1)
       println("Running Lookup for key" + key)
-      self ? findKey(key, nodeId, 0)
+      nodeFetch=nodes
+      self ! findKey(key, nodeId, 0)
     }
 
     case requestDone(hopCount: Int) => {
@@ -64,7 +65,7 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
 
       var fingerTableChordIdentifier = Array.ofDim[Int](M)
       var fingerTableNodeVal = Array.ofDim[Int](M)
-
+      //println("value of m "+m)
       for (index <- 0 to m-1) {
         fingerTableChordIdentifier(index) = fingerTable(index).split(",")(0).toInt
         fingerTableNodeVal(index) = fingerTable(index).split(",")(1).toInt
