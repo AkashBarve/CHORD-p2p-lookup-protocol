@@ -1,11 +1,6 @@
-import java.util.concurrent.{ThreadLocalRandom, TimeUnit}
+import java.util.concurrent.ThreadLocalRandom
 
 import akka.actor.{Actor, ActorRef}
-
-import scala.concurrent.duration.FiniteDuration
-import scala.concurrent.ExecutionContext.Implicits.global
-import akka.dispatch.Futures
-import akka.pattern.ask
 
 case class getKnownObj()
 case class setKnownObj(receivedObj: ChordNode)
@@ -26,7 +21,7 @@ case class requestDone(totalHops: Int)
 //case class sendNodes(nodeFetch : Array[ActorRef])
 
 class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor : ActorRef) extends Actor {
-  var nodeId: Int = Id
+  var nodeId: Int = 0
   //println("***************************")
   println("creating node " + nodeId)
   var successor: Int = 0
@@ -44,14 +39,18 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
   var nodesObj: Array[ChordNode] = Array.ofDim[ChordNode](nodeSpace)
   var KeyRange :  Array[Int] = new Array[Int](2)
   var calcHops:ActorRef = HopCalcActor
-  var nodeFetch : Array[ActorRef] = null
+  var nodeFetch : Array[ActorRef] = Array.ofDim[ActorRef](math.pow(2, M).toInt)
+  var fingerTableChordIdentifier = Array.ofDim[Int](M)
+  var fingerTableNodeVal = Array.ofDim[Int](M)
+
   //override def receive: Receive = ???
 
   def receive = {
     case reqFromNode(minKey, maxKey, nodes) => {
       var key = ThreadLocalRandom.current().nextInt(minKey, maxKey + 1)
       println("Running Lookup for key" + key)
-      nodeFetch=nodes
+      this.nodeFetch = nodes
+      println("nodeFetch" + nodeFetch(5))
       self ! findKey(key, nodeId, 0)
     }
 
@@ -59,34 +58,67 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
       calcHops ! getHops(hopCount)
     }
 
-    case findKey(key, nodeOfOrigin, hopCount) => {
+    case findKey(key: Int, nodeOfOrigin: Int, hopCount: Int) => {
       var startNode = nodeOfOrigin
       var newHopCount = hopCount + 1
 
-      var fingerTableChordIdentifier = Array.ofDim[Int](M)
-      var fingerTableNodeVal = Array.ofDim[Int](M)
-      //println("value of m "+m)
-      for (index <- 0 to m-1) {
-        fingerTableChordIdentifier(index) = fingerTable(index).split(",")(0).toInt
-        fingerTableNodeVal(index) = fingerTable(index).split(",")(1).toInt
+      println("value of m "+ m + " " + fingerTable)
+      if(newHopCount > 10) {
+        self ! requestDone(newHopCount)
       }
+      else {
 
-
-      if (key >= this.predecessor+1 && key <= this.nodeId) {
-        nodeFetch(nodeOfOrigin) ! requestDone(newHopCount)
-      } else if (fingerTableChordIdentifier.contains(key)) {
-        nodeFetch(fingerTableNodeVal(fingerTableChordIdentifier.indexOf(key))) ! findKey(key, startNode, newHopCount)
-      } else {
-          if (checkForCycle(key, fingerTableChordIdentifier(m-1), fingerTableChordIdentifier(0))) {
-            nodeFetch(fingerTableNodeVal(m-1)) ! findKey(key, startNode, newHopCount)
-          } else {
-              for (index <- 0 to m-2) {
-                if (checkForCycle(key, fingerTableChordIdentifier(index), fingerTableChordIdentifier(index+1))) {
-                  nodeFetch(fingerTableNodeVal(index)) ! findKey(key, startNode, newHopCount)
-                }
-              }
+        if (key >= this.predecessor + 1 || key <= this.nodeId) {
+          try {
+            println("I am" + this.nodeId + "searching for " + key + "in if")
+            self ! requestDone(newHopCount)
           }
+          catch {
+            case e: NullPointerException => println("Faulty Node")
+          }
+
+        } else if (fingerTableChordIdentifier.contains(key)) {
+          println("I am" + this.nodeId + "searching for " + key + "in else if")
+          try {
+            nodeFetch(fingerTableNodeVal(fingerTableChordIdentifier.indexOf(key))) ! findKey(key, startNode, newHopCount)
+          }
+          catch {
+            case e: NullPointerException => self ! requestDone(newHopCount)
+          }
+        } else {
+          if (checkForCycle(key, fingerTableChordIdentifier(M - 1), fingerTableChordIdentifier(0))) {
+            try{
+              nodeFetch(fingerTableNodeVal(M - 1)) ! findKey(key, startNode, newHopCount)
+            }
+            catch {
+              case e: NullPointerException => self ! requestDone(newHopCount)
+            }
+          }
+          for (i <- 0 to M - 2) {
+            println("I am" + this.nodeId + "searching for " + key + "in else")
+            if (checkForCycle(key, fingerTableChordIdentifier(i), fingerTableChordIdentifier(i + 1))) {
+              try{
+                nodeFetch(fingerTableNodeVal(i + 1)) ! findKey(key, startNode, newHopCount)
+              }
+              catch {
+                case e: NullPointerException => self !requestDone(newHopCount)
+              }
+            }
+          }
+        }
       }
+
+        //      {
+//          if (checkForCycle(key, fingerTableChordIdentifier(m-1), fingerTableChordIdentifier(0))) {
+//            nodeFetch(fingerTableNodeVal(m-1)) ! findKey(key, startNode, newHopCount)
+//          } else {
+//              for (index <- 0 to m-2) {
+//                if (checkForCycle(key, fingerTableChordIdentifier(index), fingerTableChordIdentifier(index+1))) {
+//                  nodeFetch(fingerTableNodeVal(index)) ! findKey(key, startNode, newHopCount)
+//                }
+//              }
+//          }
+//      }
 
     }
 
@@ -99,7 +131,12 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
       println("successor for " + nodeId  +" is " + this.successor);
     }
     case setFingerTable(fingertable) => {
-     this.fingerTable = fingertable
+      for (index <- 0 to M-1) {
+        this.fingerTableChordIdentifier(index) = fingertable(index).split(",")(0).toInt
+        this.fingerTableNodeVal(index) = fingertable(index).split(",")(1).toInt
+        println("*********" + fingerTableChordIdentifier(index) + "****" + fingerTableNodeVal(index))
+      }
+     //this.fingerTable = fingertable
       println("fingertable for " + nodeId + " is of length" + fingerTable.size)
 //      for(i <- 0 to this.fingerTable.size - 1) {
 //        var printnode =  this.fingerTable(i).split(",")
@@ -113,95 +150,95 @@ class ChordNode(Id: Int, numNodes: Seq[Int], M: Int, numReq : Int, HopCalcActor 
     }
 
 
-    case join(joinId: Int, kNode: ActorRef, allNodes: Array[ActorRef], requestNumber: Int) => {
-      nodeId = joinId
-      knownNode = kNode
-      m = M
-      networkNodes = allNodes
-      numRequests = requestNumber
-      knownNode ! getKnownObj()
-      for (i <- 0 to m - 1) {
-        var start = (nodeId + math.pow(2, i).toInt) % math.pow(2, m).toInt
-        fingerTable(i) = (start + ",X")
-      }
-
-      for (i <- 0 to networkNodes.length - 1) {
-        if (networkNodes(i) != null) {
-          networkNodes(i) ! getObj()
-        }
-
-      }
-      println("case join for "+ nodeId)
-      context.system.scheduler.scheduleOnce(FiniteDuration(3000, TimeUnit.MILLISECONDS), self, updateOthersFingerTable())
-
-    }
-    case getKnownObj() => {
-      sender ! setKnownObj(this)
-
-    }
-    case setKnownObj(rObj: ChordNode) => {
-      knownNodeObj = rObj
-    }
-    case getObj() => {
-      sender ! setObj(this, nodeId)
-
-    }
-    case setObj(rObj: ChordNode, id: Int) => {
-      nodesObj(id) = rObj
-    }
-
-    case updateOthersFingerTable() => {
-      println("update others finger table for node "+nodeId)
-      var Nodes: List[Int] = null
-      if (this.nodeId < this.predecessor) {
-        Nodes = List()
-        for (i <- this.predecessor + 1 to math.pow(2, m).toInt - 1) {
-          Nodes ::= i
-        }
-        for (i <- 0 to this.nodeId) {
-          Nodes ::= i
-        }
-      } else {
-        Nodes = List()
-        for (i <- this.predecessor + 1 to this.nodeId) {
-          Nodes ::= i
-        }
-      }
-
-      for (i <- 0 to networkNodes.length - 1) {
-        if (networkNodes(i) != null) {
-          networkNodes(i) ! updateFinger(Nodes, nodeId)
-        }
-
-      }
-
-      context.system.scheduler.scheduleOnce(FiniteDuration(3000, TimeUnit.MILLISECONDS), self, updateKeys())
-
-    }
-    case updateFinger(nodesAffected: List[Int], newValue: Int) => {
-      for( index <- 0 to m-1) {
-        fingerTableStart(index) = fingerTable(index).split(",")(0).toInt
-        fingerTableNode(index) = fingerTable(index).split(",")(1).toInt
-      }
-
-      for (index <- 0 to nodesAffected.length-1) {
-        if (fingerTableStart.contains(nodesAffected(index))) {
-          fingerTable(fingerTableStart.indexOf(nodesAffected(index))) = fingerTable(fingerTableStart.indexOf(nodesAffected(index))).split(",")(0) + "," + newValue
-        } 
-      }
-
-      for (index <- 0 to m-1) {
-        fingerTableStart(index) = fingerTable(index).split(",")(0).toInt
-        fingerTableNode(index) = fingerTable(index).split(",")(1).toInt
-      }
-
-    }
-    case updateKeys() => {
-      //println("TODO: update keys")
-      //TODO
-
-    }
-
+//    case join(joinId: Int, kNode: ActorRef, allNodes: Array[ActorRef], requestNumber: Int) => {
+//      nodeId = joinId
+//      knownNode = kNode
+//      m = M
+//      networkNodes = allNodes
+//      numRequests = requestNumber
+//      knownNode ! getKnownObj()
+//      for (i <- 0 to m - 1) {
+//        var start = (nodeId + math.pow(2, i).toInt) % math.pow(2, m).toInt
+//        fingerTable(i) = (start + ",X")
+//      }
+//
+//      for (i <- 0 to networkNodes.length - 1) {
+//        if (networkNodes(i) != null) {
+//          networkNodes(i) ! getObj()
+//        }
+//
+//      }
+//      println("case join for "+ nodeId)
+//      context.system.scheduler.scheduleOnce(FiniteDuration(3000, TimeUnit.MILLISECONDS), self, updateOthersFingerTable())
+//
+//    }
+//    case getKnownObj() => {
+//      sender ! setKnownObj(this)
+//
+//    }
+//    case setKnownObj(rObj: ChordNode) => {
+//      knownNodeObj = rObj
+//    }
+//    case getObj() => {
+//      sender ! setObj(this, nodeId)
+//
+//    }
+//    case setObj(rObj: ChordNode, id: Int) => {
+//      nodesObj(id) = rObj
+//    }
+//
+//    case updateOthersFingerTable() => {
+//      println("update others finger table for node "+nodeId)
+//      var Nodes: List[Int] = null
+//      if (this.nodeId < this.predecessor) {
+//        Nodes = List()
+//        for (i <- this.predecessor + 1 to math.pow(2, m).toInt - 1) {
+//          Nodes ::= i
+//        }
+//        for (i <- 0 to this.nodeId) {
+//          Nodes ::= i
+//        }
+//      } else {
+//        Nodes = List()
+//        for (i <- this.predecessor + 1 to this.nodeId) {
+//          Nodes ::= i
+//        }
+//      }
+//
+//      for (i <- 0 to networkNodes.length - 1) {
+//        if (networkNodes(i) != null) {
+//          networkNodes(i) ! updateFinger(Nodes, nodeId)
+//        }
+//
+//      }
+//
+//      context.system.scheduler.scheduleOnce(FiniteDuration(3000, TimeUnit.MILLISECONDS), self, updateKeys())
+//
+//    }
+//    case updateFinger(nodesAffected: List[Int], newValue: Int) => {
+//      for( index <- 0 to m-1) {
+//        fingerTableStart(index) = fingerTable(index).split(",")(0).toInt
+//        fingerTableNode(index) = fingerTable(index).split(",")(1).toInt
+//      }
+//
+//      for (index <- 0 to nodesAffected.length-1) {
+//        if (fingerTableStart.contains(nodesAffected(index))) {
+//          fingerTable(fingerTableStart.indexOf(nodesAffected(index))) = fingerTable(fingerTableStart.indexOf(nodesAffected(index))).split(",")(0) + "," + newValue
+//        }
+//      }
+//
+//      for (index <- 0 to m-1) {
+//        fingerTableStart(index) = fingerTable(index).split(",")(0).toInt
+//        fingerTableNode(index) = fingerTable(index).split(",")(1).toInt
+//      }
+//
+//    }
+//    case updateKeys() => {
+//      //println("TODO: update keys")
+//      //TODO
+//
+//    }
+//
   }
 
   def checkForCycle(nodeID: Int, first: Int, second: Int): Boolean = {
