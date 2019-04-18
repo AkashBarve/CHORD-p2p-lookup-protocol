@@ -34,10 +34,10 @@ Scala: 2.11.0
     Windows : https://www.scala-sbt.org/release/docs/Installing-sbt-on-Windows.html 
     2. On your terminal move to the project directory ~/CHORD-p2p-lookup-protocol/
     3. To compile use command "sbt compile"
-    4. To run "sbt run <Number of nodes to start> <Number of requests to generate> <Time to Stabilize Network (in secs)>"
-    eg. sbt run 30 10 10
-    5. You can also use "sbt compile run <Number of nodes to start> <Number of requests to generate> <Time to Stabilize Network (in secs)>"
-    eg. sbt compile run 30 10 10"
+    4. To run sbt "run <Number of nodes to start> <Number of requests to generate> <Time to Stabilize Network (in secs)>"
+    eg. sbt "run 30 10 10"
+    5. You can also use sbt compile "run <Number of nodes to start> <Number of requests to generate> <Time to Stabilize Network (in secs)>"
+    eg. sbt compile "run 30 10 10"
 
 Note: The sbt version and library compatibilities might sometimes cause a error saying some dependency could not be compiled. 
 To solve this you can run the project on an sbt shell on IntelliJ
